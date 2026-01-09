@@ -186,7 +186,7 @@ def main():
             print(f"{i+1}. {cat.capitalize()}")
         print("q. Esci")
         
-        choice = input("\nSelect your area of interest ")
+        choice = input("\nSelect your area of interest: ")
         if choice.lower() == 'q': break
         
         try:
@@ -201,7 +201,7 @@ def main():
         for i, art in enumerate(articles[:10]):
             print(f"{i+1}. {art['title']}")
         
-        sel = input("\nDo you want to analyse a specific article? (Insert a number o 'b' to go back ")
+        sel = input("\nDo you want to analyse a specific article? (Insert a number o 'b' to go back): ")
         if sel == 'b': continue
         
         try:
