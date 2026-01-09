@@ -1,4 +1,10 @@
 import sys
+import os
+import warnings
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+warnings.filterwarnings("ignore")
+
 import requests
 import trafilatura
 import matplotlib.pyplot as plt
@@ -6,7 +12,10 @@ from wordcloud import WordCloud
 from collections import Counter
 from newsapi import NewsApiClient
 from newspaper import Article
-from transformers import pipeline
+from transformers import pipeline, logging as hf_logging
+
+hf_logging.set_verbosity_error()
+
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -115,6 +124,38 @@ class NewsAssistant:
         plt.show()
         
         return articles
+    
+    def _run_ner_on_full_text(self, text, chunk_size=400):
+        """
+        Execute NER on the full text by chunking it to avoid model limits.    
+
+        """
+        entities = {"PER": set(), "ORG": set(), "LOC": set()}
+        
+        if not text: return entities
+
+        chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+
+        for chunk in chunks:
+            try:
+                ner_results = self.ner_pipeline(chunk)
+                
+                for entity in ner_results:
+                    if entity['score'] < 0.85: continue
+                    
+                    word = entity['word'].strip()
+                    
+                    if word.startswith("##") or len(word) < 4: continue
+                    
+                    group = entity['entity_group']
+                    
+                    if group in entities:
+                        entities[group].add(word)
+            except Exception as e:
+                
+                continue
+                
+        return entities
 
     def analyze_single_article(self, url):
         """Summarization + Sentiment + Keywords + NER"""
@@ -140,7 +181,10 @@ class NewsAssistant:
             # 2. SUMMARIZATION
             input_len = len(full_text.split())
             max_len = min(130, input_len // 2)
-            summary = self.summarizer(full_text, max_length=max_len, min_length=30, truncation=True)[0]['summary_text']
+            try:
+                summary = self.summarizer(full_text[:3000], max_length=max_len, min_length=30, truncation=True)[0]['summary_text']
+            except:
+                summary = "Summary generation failed (text too long or complex)."
             
             # 3. SENTIMENT ANALYSIS
             sentiment = self.sentiment_analyzer(full_text[:512])[0]
@@ -149,16 +193,9 @@ class NewsAssistant:
             clean_tokens = self.preprocess_text(full_text)
             keywords = Counter(clean_tokens).most_common(5)
 
-            # 5. NAMED ENTITY RECOGNITION (NER)
-            ner_results = self.ner_pipeline(full_text[:1000])
-            
-            entities = {"PER": set(), "ORG": set(), "LOC": set()}
-            
-            for entity in ner_results:
-                if entity['score'] > 0.80:
-                    entity_type = entity['entity_group']
-                    if entity_type in entities:
-                        entities[entity_type].add(entity['word'])
+            # 5. NAMED ENTITY RECOGNITION (NER) - ORA SULL'INTERO TESTO
+            print("   Processing NER on full text...")
+            entities = self._run_ner_on_full_text(full_text)
             
             return {
                 "summary": summary,
@@ -171,14 +208,13 @@ class NewsAssistant:
         except Exception as e:
             print(f"Error during analysis: {e}")
             return None
-
 def main():
     API_KEY = 'f2473c71c92945a0add2e545acdd5ee0' 
     assistant = NewsAssistant(API_KEY)
 
     while True:
         print("\n" + "="*50)
-            print(" 📰 AI NEWS ASSISTANT & PRESS REVIEW")
+        print(" 📰 AI NEWS ASSISTANT & PRESS REVIEW")
         print("="*50)
         categories = ['general', 'technology', 'business', 'science', 'health']
         for i, cat in enumerate(categories):
