@@ -39,7 +39,7 @@ class NewsAssistant:
         self.summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
         
         # 3. Named Entity Recognition
-        print("Caricamento modello NER...")
+        print("Loading NER model...")
         self.ner_pipeline = pipeline("ner", model="dslim/bert-base-NER", aggregation_strategy="simple")
         
         print("All models ready!\n")
