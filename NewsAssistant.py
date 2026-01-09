@@ -7,13 +7,11 @@ from collections import Counter
 from newsapi import NewsApiClient
 from newspaper import Article
 from transformers import pipeline
-
-# NLTK per il preprocessing (Lezione 5)
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-# Setup risorse NLTK
+# Setup NLTK resources
 try:
     nltk.data.find('tokenizers/punkt')
     nltk.data.find('corpora/stopwords')
@@ -24,7 +22,7 @@ except LookupError:
 
 class NewsAssistant:
     def __init__(self, api_key):
-        print("--- Inizializzazione NewsAssistant (Text Mining Suite) ---")
+        print("--- Initialising NewsAssistant ---")
         self.newsapi = NewsApiClient(api_key=api_key)
         
         self.headers = {
@@ -33,19 +31,18 @@ class NewsAssistant:
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
         }
         
-        print("Caricamento modelli AI...")
-        # 1. Sentiment Analysis (Lezione 4 - Opinion Mining)
+        print("Loading AI models...")
+        # 1. Sentiment Analysis
         self.sentiment_analyzer = pipeline("sentiment-analysis", model="distilbert-base-uncased-finetuned-sst-2-english")
         
-        # 2. Summarization (Lezione 4)
+        # 2. Summarization
         self.summarizer = pipeline("summarization", model="sshleifer/distilbart-cnn-12-6")
         
-        # 3. Named Entity Recognition (Lezione 5 - NER)
-        # Usiamo 'aggregation_strategy="simple"' per unire i token (es. "New" + "York" = "New York")
+        # 3. Named Entity Recognition
         print("Caricamento modello NER...")
         self.ner_pipeline = pipeline("ner", model="dslim/bert-base-NER", aggregation_strategy="simple")
         
-        print("Tutti i modelli sono pronti!\n")
+        print("All models ready!\n")
 
     def get_top_headlines(self, category='general', page_size=20):
         try:
@@ -54,11 +51,11 @@ class NewsAssistant:
             )
             return top_headlines['articles']
         except Exception as e:
-            print(f"Errore API: {e}")
+            print(f"API error: {e}")
             return []
 
     def preprocess_text(self, text):
-        """Lezione 5: Preprocessing Steps - Pulizia per Keywords e WordCloud"""
+        """Preprocessing Steps - Cleaning for Keywords e WordCloud"""
         if not text: return []
         tokens = word_tokenize(text.lower())
         stop_words = set(stopwords.words('english'))
@@ -68,14 +65,14 @@ class NewsAssistant:
         return filtered
 
     def generate_daily_briefing(self, category='general'):
-        """Crea la 'Rassegna Stampa' con Word Cloud e Sentiment del Giorno."""
-        print(f"\n--- 📊 GENERAZIONE RASSEGNA STAMPA DEL GIORNO ({category.upper()}) ---")
-        print("Scaricamento notizie e analisi in corso...")
+        """Create the 'Press Review' with Word Cloud and Daily Sentiment."""
+        print(f"\n--- 📊 GENERATING DAILY PRESS REVIEW ({category.upper()}) ---")
+        print("Downloading and analysing news...")
         
         articles = self.get_top_headlines(category=category, page_size=30)
         
         if not articles:
-            print("Nessuna notizia trovata.")
+            print("News not found.")
             return []
 
         all_text = ""
@@ -95,16 +92,16 @@ class NewsAssistant:
         if total > 0:
             pos_pct = (sentiment_counts['POSITIVE'] / total) * 100
             neg_pct = (sentiment_counts['NEGATIVE'] / total) * 100
-            sentiment_summary = f"Umore Globale: {pos_pct:.1f}% POSITIVO | {neg_pct:.1f}% NEGATIVO"
+            sentiment_summary = f"Global Sentiment: {pos_pct:.1f}% POSITIVE | {neg_pct:.1f}% NEGATIVE"
         else:
-            sentiment_summary = "Sentiment non calcolabile"
+            sentiment_summary = "Impossible to calculate sentiment "
 
-        print("Generazione Word Cloud...")
+        print("Generating Word Cloud...")
         clean_tokens = self.preprocess_text(all_text)
         clean_text_string = " ".join(clean_tokens)
         
         if not clean_text_string:
-            print("Non abbastanza testo per generare la Word Cloud.")
+            print("Not enough text to generate a Word Cloud.")
             return articles
 
         wordcloud = WordCloud(width=800, height=400, background_color='white').generate(clean_text_string)
@@ -115,37 +112,31 @@ class NewsAssistant:
         plt.title(f"TOPICS OF THE DAY - {category.upper()}\n{sentiment_summary}", fontsize=14, color='darkblue')
         
         print(f"\n>>> {sentiment_summary}")
-        print(">>> Una finestra con la Word Cloud è stata aperta. Chiudila per continuare.")
+        print(">>> A Word Cloud window is open. Close to continue.")
         plt.show()
         
         return articles
 
     def analyze_single_article(self, url):
-        """Metodo per l'analisi profonda: Summarization + Sentiment + Keywords + NER"""
+        """Summarization + Sentiment + Keywords + NER"""
         try:
-            print(f"   Tentativo di scaricamento intelligente da: {url[:40]}...")
+            print(f"   Trying smart download from: {url[:40]}...")
             
-            # --- 1. ACQUISITION (Potenziata con Trafilatura) ---
-            # Trafilatura gestisce meglio i download e prova a bypassare alcuni blocchi
+            # 1. ACQUISITION
             downloaded = trafilatura.fetch_url(url)
             
             if downloaded:
-                # Estraiamo il testo pulito
                 full_text = trafilatura.extract(downloaded, include_comments=False, include_tables=False)
             else:
-                # Fallback: Se trafilatura fallisce il download, proviamo col nostro requests
-                # (A volte requests con i nostri header custom funziona dove trafilatura fallisce)
+                # Fallback: if trafilatura fails, try with requests
                 try:
                     response = requests.get(url, headers=self.headers, timeout=20)
                     full_text = trafilatura.extract(response.text)
                 except:
                     full_text = None
-
-            # Controllo validità testo
+                    
             if not full_text or len(full_text) < 100: 
                 return None
-
-            # --- DA QUI IN POI È UGUALE A PRIMA ---
 
             # 2. SUMMARIZATION
             input_len = len(full_text.split())
@@ -160,7 +151,6 @@ class NewsAssistant:
             keywords = Counter(clean_tokens).most_common(5)
 
             # 5. NAMED ENTITY RECOGNITION (NER)
-            # Analizziamo i primi 1000 caratteri
             ner_results = self.ner_pipeline(full_text[:1000])
             
             entities = {"PER": set(), "ORG": set(), "LOC": set()}
@@ -180,7 +170,7 @@ class NewsAssistant:
             }
 
         except Exception as e:
-            print(f"Errore durante l'analisi: {e}")
+            print(f"Error during analysis: {e}")
             return None
 
 def main():
@@ -189,14 +179,14 @@ def main():
 
     while True:
         print("\n" + "="*50)
-        print(" 📰 AI NEWS ASSISTANT & DAILY BRIEFING")
+            print(" 📰 AI NEWS ASSISTANT & PRESS REVIEW")
         print("="*50)
         categories = ['general', 'technology', 'business', 'science', 'health']
         for i, cat in enumerate(categories):
             print(f"{i+1}. {cat.capitalize()}")
         print("q. Esci")
         
-        choice = input("\nDi quale settore vuoi la rassegna stampa oggi? ")
+        choice = input("\nSelect your area of interest ")
         if choice.lower() == 'q': break
         
         try:
@@ -207,46 +197,46 @@ def main():
         articles = assistant.generate_daily_briefing(category=cat)
         if not articles: continue
 
-        print("\n--- DETTAGLIO ARTICOLI ---")
+        print("\n--- ARTICLE DETAILS ---")
         for i, art in enumerate(articles[:10]):
             print(f"{i+1}. {art['title']}")
         
-        sel = input("\nVuoi analizzare un articolo specifico? (Inserisci numero o 'b' per tornare): ")
+        sel = input("\nDo you want to analyse a specific article? (Insert a number o 'b' to go back ")
         if sel == 'b': continue
         
         try:
             idx = int(sel) - 1
             if 0 <= idx < len(articles):
                 selected_article = articles[idx]
-                print(f"\n--- Analisi Approfondita: {selected_article['title']} ---")
-                print("Esecuzione pipeline di Text Mining (NER, Sentiment, Summarization)...")
+                print(f"\n--- In-depth Analysis: {selected_article['title']} ---")
+                print("Executing Text Mining pipeline (NER, Sentiment, Summarization)...")
                 
                 result = assistant.analyze_single_article(selected_article['url'])
                 
                 if result:
                     print("\n" + "█"*20 + " REPORT " + "█"*20)
                     
-                    print(f"\n📝 RIASSUNTO:\n{result['summary']}")
+                    print(f"\n📝 SUMMARY:\n{result['summary']}")
                     
                     label = result['sentiment']['label']
                     score = result['sentiment']['score']
                     icon = "🟢" if label == 'POSITIVE' else "🔴"
-                    print(f"\n{icon} SENTIMENT:\n{label} (Confidenza: {score:.4f})")
+                    print(f"\n{icon} SENTIMENT:\n{label} (Confidence: {score:.4f})")
                     
                     # --- SEZIONE NER ---
-                    print("\n🔍 ATTORI E LUOGHI (NER Analysis):")
+                    print("\n🔍 NER ANALYSIS:")
                     
                     # Convertiamo i set in liste ordinate per la stampa
                     people = sorted(list(result['entities']['PER']))
                     orgs = sorted(list(result['entities']['ORG']))
                     locs = sorted(list(result['entities']['LOC']))
 
-                    if people: print(f"   👤 Persone: {', '.join(people)}")
-                    if orgs:   print(f"   🏢 Organizzazioni: {', '.join(orgs)}")
-                    if locs:   print(f"   🌍 Luoghi: {', '.join(locs)}")
+                    if people: print(f"   👤 People: {', '.join(people)}")
+                    if orgs:   print(f"   🏢 Organisations: {', '.join(orgs)}")
+                    if locs:   print(f"   🌍 Locations: {', '.join(locs)}")
                     
                     if not (people or orgs or locs):
-                        print("   (Nessuna entità rilevante identificata con alta confidenza)")
+                        print("   (No relevant entity found with high confidence)")
                     # -------------------
 
                     print("\n🔑 KEYWORDS:")
@@ -257,18 +247,18 @@ def main():
 
                     full_text = result['full_text']
                     if full_text and len(full_text) > 0:
-                        ask = input("\nVuoi leggere l'articolo intero? (s/n): ")
-                        if ask.lower() == 's':
-                            print("\n--- TESTO COMPLETO ---")
+                        ask = input("\nDo you want to read the full article? (y/n): ")
+                        if ask.lower() == 'y':
+                            print("\n--- FULL ARTICLE ---")
                             print(full_text)
                     else:
-                        print("\n(Testo completo non disponibile)")
+                        print("\n(Full article not available)")
                 else:
-                    print("\n❌ Impossibile analizzare l'articolo.")
+                    print("\n❌ Impossible to analyse the article.")
             else:
-                print("Numero non valido.")
+                print("Invalid number.")
         except ValueError:
-            print("Input non valido.")
+            print("Invalid input.")
 
 if __name__ == "__main__":
     main()
