@@ -1,4 +1,4 @@
-📰 AI News Assistant & Press Review
+# 📰 AI News Assistant & Press Review
 AI News Assistant è uno strumento CLI (Command Line Interface) avanzato scritto in Python che aggrega notizie in tempo reale e le analizza utilizzando modelli di Intelligenza Artificiale (NLP).
 
 Non si limita a scaricare le notizie: crea riassunti automatici, analizza il "sentiment" degli articoli, estrae le entità nominate (persone, luoghi, aziende) e genera visualizzazioni grafiche (Word Cloud) dei temi caldi del giorno.
