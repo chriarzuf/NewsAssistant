@@ -68,5 +68,4 @@ This project is distributed under the **MIT License**.
 
 
 
-📄 Licenza
-Distribuito sotto licenza MIT.
+
