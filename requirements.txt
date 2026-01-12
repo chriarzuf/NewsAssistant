@@ -1,9 +1,9 @@
 requests
-trafilatura
-matplotlib
-wordcloud
 newsapi-python
 transformers
 nltk
+matplotlib
+wordcloud
+trafilatura
+tensorflow
 torch
-sentencepiece
