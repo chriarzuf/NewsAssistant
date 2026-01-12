@@ -1,87 +1,71 @@
 # 📰 AI News Assistant & Press Review
 
-AI News Assistant è uno strumento CLI (Command Line Interface) avanzato scritto in Python che aggrega notizie in tempo reale e le analizza utilizzando modelli di Intelligenza Artificiale (NLP).
+**AI News Assistant** is a comprehensive Python tool designed to aggregate real-time news and perform advanced analysis using Natural Language Processing (NLP).
 
-Non si limita a scaricare le notizie: crea riassunti automatici, analizza il "sentiment" degli articoli, estrae le entità nominate (persone, luoghi, aziende) e genera visualizzazioni grafiche (Word Cloud) dei temi caldi del giorno.
+Unlike standard news aggregators, this assistant reads the articles for you. It leverages Hugging Face Transformers to generate summaries, detect sentiment, extract entities (NER), and visualize daily trending topics.
 
+## ✨ Key Features
 
-✨ Funzionalità Principali
-🌐 Aggregazione Notizie: Scarica le ultime notizie da fonti affidabili in lingua inglese tramite NewsAPI.
+* **🌐 Smart Aggregation:** Fetches top headlines based on categories (Tech, Business, Science, etc.) using NewsAPI.
+* **🧠 AI-Powered Analysis:**
+    * **Summarization:** Condenses long articles into concise briefings using the `DistilBART` model.
+    * **Sentiment Analysis:** Evaluates the tone (Positive/Negative) of specific articles and the general daily mood.
+    * **NER (Named Entity Recognition):** Identifies People, Organizations, and Locations mentioned in the text.
+* **☁️ Visualizations:** Generates a **Word Cloud** to visualize the most frequent topics of the day.
+* **📥 Smart Scraping:** Uses `trafilatura` to extract clean content from web pages, bypassing ads and cluttered layouts.
+* **🛡️ Paywall Filter:** Automatically skips domains known for strict paywalls (e.g., WSJ, Bloomberg) to ensure smooth analysis.
 
-📊 Analisi del Sentiment: Determina se il tono di un articolo o di una rassegna stampa è Positivo o Negativo.
+## 🛠️ Technology Stack
 
-🧠 Riassunti Automatici: Utilizza reti neurali per leggere articoli lunghi e generarne riassunti concisi.
+* **Core:** Python 3.8+
+* **NLP & AI:** Hugging Face Transformers, PyTorch/TensorFlow, NLTK.
+* **Data Source:** NewsAPI.
+* **Utilities:** Trafilatura (Scraping), WordCloud & Matplotlib (Data Viz).
 
-🔍 Named Entity Recognition (NER): Identifica ed estrae automaticamente i protagonisti delle notizie (Persone, Organizzazioni, Luoghi).
+## 🚀 Installation & Setup
 
-☁️ Word Cloud: Genera una nuvola di parole visiva basata sulla frequenza dei termini negli articoli del giorno.
+To run this application, ensure you have a Python environment set up on your machine.
 
-📥 Smart Scraping: Estrae il testo completo dagli articoli (bypassando layout complessi) utilizzando trafilatura.
+1.  **Install Dependencies:**
+    Download the source code and install the required Python libraries listed in the `requirements.txt` file included in this repository.
 
-🛡️ Filtro Paywall: Esclude automaticamente domini noti per avere paywall rigidi (es. WSJ, Bloomberg) per evitare errori di analisi.
+2.  **Model Download:**
+    The first time you launch the application, it will automatically download the necessary AI models (Sentiment, Summarization, NER) and NLTK data. This requires an active internet connection and may take a few minutes depending on your speed.
 
+## ⚙️ Configuration
 
-🛠️ Tecnologie e Modelli
-Il progetto sfrutta potenti librerie open-source e modelli pre-addestrati di Hugging Face:
+You must provide a valid API Key from **NewsAPI** for the application to function.
 
--NewsAPI: Per il recupero dei metadati delle notizie.
+1.  Obtain a free API Key at [https://newsapi.org](https://newsapi.org).
+2.  Open the `main.py` file in your code editor.
+3.  Locate the `main()` function and assign your key to the `API_KEY` variable:
 
--Transformers (Hugging Face):
+```python
+def main():
+    API_KEY = 'YOUR_ACTUAL_API_KEY_HERE' 
+    # ...
+```
 
-  -Sentiment: distilbert-base-uncased-finetuned-sst-2-english
+## 🖥️ Usage
 
-  -Summarization: sshleifer/distilbart-cnn-12-6
+Run the main script to launch the interactive interface.
 
-  -NER: dslim/bert-base-NER
+**Workflow:**
+1.  **Select a Category:** Choose your area of interest (e.g., General, Technology, Health) from the numbered menu.
+2.  **Daily Briefing:** The assistant will first download the latest headlines. It will then display a **Word Cloud** window showing trending topics and print a global sentiment score.
+3.  **Article Selection:** Close the Word Cloud window to view the list of headlines.
+4.  **Deep Analysis:** Enter the number of a specific article to trigger the full AI pipeline. The system will scrape the full text, generate a summary, and extract key entities (People, Organizations, Locations).
 
--NLTK: Per la pulizia del testo, tokenizzazione e rimozione delle stop-words.
+## ⚠️ System Requirements & Performance
 
--Trafilatura: Per lo scraping efficiente del contenuto web.
+* **Memory (RAM):** At least **4GB** is recommended to handle the Transformer models (BERT and BART) efficiently.
+* **Hardware Acceleration:** The application is built to automatically detect **NVIDIA GPUs** (via CUDA). If available, analysis will be significantly faster. If not, it defaults to CPU processing.
+* **Internet:** An active connection is required to fetch metadata from NewsAPI, download models (on first run), and scrape article content.
 
--WordCloud & Matplotlib: Per la generazione e visualizzazione dei grafici.
+## 📄 License
 
+This project is distributed under the **MIT License**.
 
-🚀 Prerequisiti
-Assicurati di avere Python 3.8+ installato.
-
-
-⚙️ Configurazione
-Per far funzionare il programma, hai bisogno di una API Key gratuita di NewsAPI.
-
-1.Registrati su NewsAPI.org.
-
-2.Apri il file main.py.
-
-3.Cerca la variabile API_KEY nella funzione main() e inserisci la tua chiave.
-
-
-🖥️ Utilizzo
-Avvia il programma da terminale
-
-Flusso di lavoro:
-All'avvio, il sistema caricherà i modelli AI (la prima volta potrebbe richiedere qualche minuto per il download).
-
-1.Seleziona una categoria (General, Technology, Business, ecc.).
-
-2.Verrà mostrata una Word Cloud e un riassunto del Sentiment Globale della rassegna stampa.
-
-3.Chiudi la finestra del grafico per vedere la lista degli articoli.
-
-4.Seleziona il numero di un articolo per analizzarlo in profondità (Riassunto, NER, Sentiment dettagliato).
-
-
-📂 Struttura del Codice
-NewsAssistant: La classe principale. Gestisce il caricamento "lazy" (ritardato) dei modelli pesanti per velocizzare l'avvio iniziale.
-
--generate_daily_briefing: Scarica i titoli, calcola il sentiment medio e crea la Word Cloud.
-
--analyze_single_article: Scarica il testo completo di un URL specifico ed esegue la pipeline di analisi profonda.
-
-
-⚠️ Note
-Performance: L'analisi AI è intensiva per la CPU. Se hai una GPU NVIDIA configurata con CUDA, i modelli transformers proveranno ad usarla, altrimenti useranno la CPU (più lento).
-
-Traffico Dati: Il download dei modelli di Hugging Face richiede diverse centinaia di MB al primo avvio.
 
 
 📄 Licenza
