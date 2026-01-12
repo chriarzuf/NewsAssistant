@@ -34,7 +34,7 @@ class NewsAssistant:
     def device(self):
         if self._device is None:
             self._device = -1
-            print("💻 Using CPU (Forced override)")
+            print("💻 Using CPU")
         return self._device
 
     @property
@@ -196,7 +196,7 @@ class NewsAssistant:
     def analyze_single_article(self, url):
         import trafilatura
         
-        blocked_domains = ['bloomberg.com', 'wsj.com', 'ft.com', 'nytimes.com', 'washingtonpost.com']
+        blocked_domains = ['bloomberg.com', 'wsj.com', 'ft.com', 'nytimes.com', 'washingtonpost.com', 'medium.com']
         if any(domain in url for domain in blocked_domains):
             print("   🚫 Skipped (Protected/Paywall domain)")
             return None
@@ -209,7 +209,7 @@ class NewsAssistant:
             full_text = None
             
             try:
-                response = requests.get(url, headers=self.headers, timeout=(3, 5))
+                response = requests.get(url, headers=self.headers, timeout=(6, 10))
                 response.raise_for_status() 
                 full_text = trafilatura.extract(response.text, include_comments=False, include_tables=False)
             except Exception as e:
