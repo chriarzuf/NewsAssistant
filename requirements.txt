@@ -3,7 +3,6 @@ trafilatura
 matplotlib
 wordcloud
 newsapi-python
-newspaper3k
 transformers
 nltk
 torch
