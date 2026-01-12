@@ -41,8 +41,7 @@ Il progetto sfrutta potenti librerie open-source e modelli pre-addestrati di Hug
 -WordCloud & Matplotlib: Per la generazione e visualizzazione dei grafici.
 
 
-🚀 Installazione
-Prerequisiti
+🚀 Prerequisiti
 Assicurati di avere Python 3.8+ installato.
 
 
