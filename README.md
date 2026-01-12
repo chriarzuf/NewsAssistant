@@ -19,7 +19,7 @@ Unlike standard news aggregators, this assistant reads the articles for you. It 
 
 * **Core:** Python 3.8+
 * **NLP & AI:** Hugging Face Transformers, PyTorch/TensorFlow, NLTK.
-* **Data Source:** NewsAPI.
+* **Data Source:** NewsAPI, the Web.
 * **Utilities:** Trafilatura (Scraping), WordCloud & Matplotlib (Data Viz).
 
 ## 🚀 Installation & Setup
