@@ -1,7 +1,9 @@
 # 📰 AI News Assistant & Press Review
+
 AI News Assistant è uno strumento CLI (Command Line Interface) avanzato scritto in Python che aggrega notizie in tempo reale e le analizza utilizzando modelli di Intelligenza Artificiale (NLP).
 
 Non si limita a scaricare le notizie: crea riassunti automatici, analizza il "sentiment" degli articoli, estrae le entità nominate (persone, luoghi, aziende) e genera visualizzazioni grafiche (Word Cloud) dei temi caldi del giorno.
+
 
 ✨ Funzionalità Principali
 🌐 Aggregazione Notizie: Scarica le ultime notizie da fonti affidabili in lingua inglese tramite NewsAPI.
@@ -17,6 +19,7 @@ Non si limita a scaricare le notizie: crea riassunti automatici, analizza il "se
 📥 Smart Scraping: Estrae il testo completo dagli articoli (bypassando layout complessi) utilizzando trafilatura.
 
 🛡️ Filtro Paywall: Esclude automaticamente domini noti per avere paywall rigidi (es. WSJ, Bloomberg) per evitare errori di analisi.
+
 
 🛠️ Tecnologie e Modelli
 Il progetto sfrutta potenti librerie open-source e modelli pre-addestrati di Hugging Face:
@@ -37,9 +40,11 @@ Il progetto sfrutta potenti librerie open-source e modelli pre-addestrati di Hug
 
 -WordCloud & Matplotlib: Per la generazione e visualizzazione dei grafici.
 
+
 🚀 Installazione
 Prerequisiti
 Assicurati di avere Python 3.8+ installato.
+
 
 ⚙️ Configurazione
 Per far funzionare il programma, hai bisogno di una API Key gratuita di NewsAPI.
@@ -49,6 +54,7 @@ Per far funzionare il programma, hai bisogno di una API Key gratuita di NewsAPI.
 2.Apri il file main.py.
 
 3.Cerca la variabile API_KEY nella funzione main() e inserisci la tua chiave.
+
 
 🖥️ Utilizzo
 Avvia il programma da terminale
@@ -64,6 +70,7 @@ All'avvio, il sistema caricherà i modelli AI (la prima volta potrebbe richieder
 
 4.Seleziona il numero di un articolo per analizzarlo in profondità (Riassunto, NER, Sentiment dettagliato).
 
+
 📂 Struttura del Codice
 NewsAssistant: La classe principale. Gestisce il caricamento "lazy" (ritardato) dei modelli pesanti per velocizzare l'avvio iniziale.
 
@@ -71,10 +78,12 @@ NewsAssistant: La classe principale. Gestisce il caricamento "lazy" (ritardato) 
 
 -analyze_single_article: Scarica il testo completo di un URL specifico ed esegue la pipeline di analisi profonda.
 
+
 ⚠️ Note
 Performance: L'analisi AI è intensiva per la CPU. Se hai una GPU NVIDIA configurata con CUDA, i modelli transformers proveranno ad usarla, altrimenti useranno la CPU (più lento).
 
 Traffico Dati: Il download dei modelli di Hugging Face richiede diverse centinaia di MB al primo avvio.
+
 
 📄 Licenza
 Distribuito sotto licenza MIT.
