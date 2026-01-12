@@ -21,21 +21,21 @@ Non si limita a scaricare le notizie: crea riassunti automatici, analizza il "se
 🛠️ Tecnologie e Modelli
 Il progetto sfrutta potenti librerie open-source e modelli pre-addestrati di Hugging Face:
 
-NewsAPI: Per il recupero dei metadati delle notizie.
+-NewsAPI: Per il recupero dei metadati delle notizie.
 
-Transformers (Hugging Face):
+-Transformers (Hugging Face):
 
-Sentiment: distilbert-base-uncased-finetuned-sst-2-english
+  -Sentiment: distilbert-base-uncased-finetuned-sst-2-english
 
-Summarization: sshleifer/distilbart-cnn-12-6
+  -Summarization: sshleifer/distilbart-cnn-12-6
 
-NER: dslim/bert-base-NER
+  -NER: dslim/bert-base-NER
 
-NLTK: Per la pulizia del testo, tokenizzazione e rimozione delle stop-words.
+-NLTK: Per la pulizia del testo, tokenizzazione e rimozione delle stop-words.
 
-Trafilatura: Per lo scraping efficiente del contenuto web.
+-Trafilatura: Per lo scraping efficiente del contenuto web.
 
-WordCloud & Matplotlib: Per la generazione e visualizzazione dei grafici.
+-WordCloud & Matplotlib: Per la generazione e visualizzazione dei grafici.
 
 🚀 Installazione
 Prerequisiti
@@ -44,11 +44,11 @@ Assicurati di avere Python 3.8+ installato.
 ⚙️ Configurazione
 Per far funzionare il programma, hai bisogno di una API Key gratuita di NewsAPI.
 
-Registrati su NewsAPI.org.
+1.Registrati su NewsAPI.org.
 
-Apri il file main.py.
+2.Apri il file main.py.
 
-Cerca la variabile API_KEY nella funzione main() e inserisci la tua chiave.
+3.Cerca la variabile API_KEY nella funzione main() e inserisci la tua chiave.
 
 🖥️ Utilizzo
 Avvia il programma da terminale
@@ -56,20 +56,20 @@ Avvia il programma da terminale
 Flusso di lavoro:
 All'avvio, il sistema caricherà i modelli AI (la prima volta potrebbe richiedere qualche minuto per il download).
 
-Seleziona una categoria (General, Technology, Business, ecc.).
+1.Seleziona una categoria (General, Technology, Business, ecc.).
 
-Verrà mostrata una Word Cloud e un riassunto del Sentiment Globale della rassegna stampa.
+2.Verrà mostrata una Word Cloud e un riassunto del Sentiment Globale della rassegna stampa.
 
-Chiudi la finestra del grafico per vedere la lista degli articoli.
+3.Chiudi la finestra del grafico per vedere la lista degli articoli.
 
-Seleziona il numero di un articolo per analizzarlo in profondità (Riassunto, NER, Sentiment dettagliato).
+4.Seleziona il numero di un articolo per analizzarlo in profondità (Riassunto, NER, Sentiment dettagliato).
 
 📂 Struttura del Codice
 NewsAssistant: La classe principale. Gestisce il caricamento "lazy" (ritardato) dei modelli pesanti per velocizzare l'avvio iniziale.
 
-generate_daily_briefing: Scarica i titoli, calcola il sentiment medio e crea la Word Cloud.
+-generate_daily_briefing: Scarica i titoli, calcola il sentiment medio e crea la Word Cloud.
 
-analyze_single_article: Scarica il testo completo di un URL specifico ed esegue la pipeline di analisi profonda.
+-analyze_single_article: Scarica il testo completo di un URL specifico ed esegue la pipeline di analisi profonda.
 
 ⚠️ Note
 Performance: L'analisi AI è intensiva per la CPU. Se hai una GPU NVIDIA configurata con CUDA, i modelli transformers proveranno ad usarla, altrimenti useranno la CPU (più lento).
